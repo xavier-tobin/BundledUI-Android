@@ -23,6 +23,26 @@ import com.xaviertobin.bundledui.section.extras.LoadingOrIcon
 
 
 @Composable
+fun ButtonChevron(
+    title: String,
+    selected: Boolean? = null,
+    tone: Tone = Tone.NEUTRAL,
+    loadingFromClick: Boolean = false,
+) = LoadingOrIcon(
+    loadingFromClick = loadingFromClick,
+    icon = Icons.Rounded.ChevronRight,
+    tone = tone,
+    size = 20.dp,
+    iconDescription = title,
+    tint = SectionDefaults.iconColor(
+        selected = selected == true,
+        tone = tone
+    ),
+    endPadding = 0.dp,
+    alpha = 0.5f
+)
+
+@Composable
 fun SectionButton(
     title: String,
     icon: ImageVector,
@@ -61,18 +81,12 @@ fun SectionButton(
     orientation = orientation,
     margin = margin,
     contentEnd = {
-        LoadingOrIcon(
-            loadingFromClick = loadingFromClick,
-            icon = Icons.Rounded.ChevronRight,
-            tone = tone,
-            iconDescription = title,
-            tint = SectionDefaults.iconColor(
-                selected = selected == true,
-                tone = tone
-            ),
-            endPadding = 0.dp,
-            alpha = 0.6f
-        )
+       ButtonChevron(
+           title = title,
+           selected = selected,
+           tone = tone,
+           loadingFromClick = loadingFromClick
+       )
     },
     contentStart = {
         Icon(
@@ -127,17 +141,11 @@ fun SectionButton(
     orientation = orientation,
     margin = margin,
     contentEnd = {
-        LoadingOrIcon(
-            loadingFromClick = loadingFromClick,
-            icon = Icons.Rounded.ChevronRight,
+        ButtonChevron(
+            title = title,
+            selected = selected,
             tone = tone,
-            iconDescription = title,
-            tint = SectionDefaults.iconColor(
-                selected = selected == true,
-                tone = tone
-            ),
-            endPadding = 0.dp,
-            alpha = 0.6f
+            loadingFromClick = loadingFromClick
         )
     },
     contentStart = {

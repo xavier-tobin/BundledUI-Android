@@ -176,7 +176,7 @@ fun SectionPasswordInput(
             last = last,
             start = 22.dp,
             top = 4.dp,
-            end = 22.dp,
+            end = 14.dp,
             bottom = 10.dp
         ),
         focused = focused,

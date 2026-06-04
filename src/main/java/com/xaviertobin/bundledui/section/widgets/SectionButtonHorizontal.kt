@@ -80,7 +80,7 @@ fun SectionButtonHorizontal(
             Icon(
                 modifier = Modifier
                     .padding(bottom = 8.dp)
-                    .size(22.dp),
+                    .size(20.dp),
                 imageVector = icon,
                 contentDescription = description ?: title,
                 tint = if (warning) MaterialTheme.colorScheme.error else if (selected) textColor else MaterialTheme.colorScheme.tertiary
@@ -94,7 +94,7 @@ fun SectionButtonHorizontal(
             description?.let {
                 Text(
                     modifier = Modifier
-                        .padding(top = 2.dp),
+                        .padding(top = 0.dp),
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
                     color = textColor,

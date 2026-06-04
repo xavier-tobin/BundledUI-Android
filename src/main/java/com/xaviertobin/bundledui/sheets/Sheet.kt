@@ -276,8 +276,8 @@ fun SheetBase(
         contentColor = MaterialTheme.colorScheme.safeSurface(),
         tonalElevation = 0.dp,
         properties = properties ?: ModalBottomSheetProperties(
-            isAppearanceLightNavigationBars = isLightTheme && !isFullscreenExpanded,
-            isAppearanceLightStatusBars = isLightTheme && !isFullscreenExpanded
+            isAppearanceLightNavigationBars = isLightTheme,
+            isAppearanceLightStatusBars = isLightTheme,
         ),
         content = {
             content(modalSheetState.targetValue, isFullscreen)

@@ -40,8 +40,8 @@ object SectionDefaults {
     fun verticalPaddingValues(
         first: Boolean = false,
         last: Boolean = false,
-        top: Dp = 12.dp,
-        bottom: Dp = 12.dp,
+        top: Dp = 10.dp,
+        bottom: Dp = 10.dp,
         start: Dp = 26.dp,
         end: Dp = 26.dp,
         firstLastExtra: Dp = 2.dp,

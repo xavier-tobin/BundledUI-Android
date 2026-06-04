@@ -42,6 +42,7 @@ fun SectionTitleDescriptionIcon(
     description: String? = null,
     first: Boolean = false,
     last: Boolean = false,
+    onClick: UnitFunction? = null,
     selected: Boolean? = null,
     tone: Tone = Tone.NEUTRAL,
     containerColor: Color = SectionDefaults.containerColor(
@@ -59,6 +60,7 @@ fun SectionTitleDescriptionIcon(
     modifier = modifier,
     title = title,
     description = description,
+    onClick = onClick,
     enabled = enabled,
     tone = tone,
     containerColor = containerColor,
@@ -177,8 +179,8 @@ private fun InnerVerticalContent(
                 .padding(
                     start = 0.dp,
                     end = 0.dp,
-                    top = 12.dp,
-                    bottom = 12.dp
+                    top = 10.dp,
+                    bottom = 10.dp
                 )
                 .weight(1f),
             verticalArrangement = Arrangement.Center
@@ -187,7 +189,7 @@ private fun InnerVerticalContent(
             SectionTitle(
                 title = title,
                 textColor = textColor,
-                padding = PaddingValues(bottom = 2.dp, top = 2.dp)
+                padding = PaddingValues(bottom = 1.dp, top = 2.dp)
             )
             description?.let {
                 Text(
@@ -217,7 +219,7 @@ private fun ColumnScope.InnerHorizontalContent(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         contentTop?.invoke()
         SectionTitle(

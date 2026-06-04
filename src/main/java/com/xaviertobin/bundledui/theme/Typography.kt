@@ -99,7 +99,7 @@ fun buildCustomTypography(
         ),
         labelSmall = TextStyle(
             fontFamily = font,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             fontSize = 12.sp * fontScale,
             color = colorScheme.text
         ),
