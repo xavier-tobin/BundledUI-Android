@@ -33,7 +33,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xaviertobin.bundledui.animations.AnimateInFade
 import com.xaviertobin.bundledui.base.conditional
+import com.xaviertobin.bundledui.color.alpha
 import com.xaviertobin.bundledui.section.widgets.SectionSwitch
 import com.xaviertobin.bundledui.theme.BaseTheme
 import com.xaviertobin.bundledui.theme.LocalBaseTheme
@@ -69,14 +70,17 @@ typealias ComposableFunction = @Composable () -> Unit
 fun Sheet(
     onDismiss: UnitFunction,
     title: String? = null,
+    subtitle: @Composable (() -> Unit)? = null,
     forceFullscreen: Boolean = false,
+    autoFullscreenAfterInitialLoad: Boolean = false,
     userDismissible: Boolean = true,
     horizontalPadding: Dp = 20.dp,
     disableScroll: Boolean = false,
     defaultContentPadding: PaddingValues = PaddingValues(
         start = horizontalPadding,
         end = horizontalPadding,
-        top = 6.dp
+        top = 6.dp,
+        bottom = 10.dp
     ),
     systemContentPadding: PaddingValues = WindowInsets.navigationBars.asPaddingValues(),
     content: @Composable (ColumnScope.() -> Unit),
@@ -87,6 +91,7 @@ fun Sheet(
         SheetBase(
             onDismiss = onDismiss,
             forceFullscreen = forceFullscreen,
+            autoFullscreenAfterInitialLoad = autoFullscreenAfterInitialLoad,
             userDismissible = userDismissible,
         ) { sheetState, isFullscreen ->
 
@@ -108,6 +113,7 @@ fun Sheet(
             if (title != null) {
                 SheetTitle(
                     title = title,
+                    subtitle = subtitle,
                     isFullscreen = isFullscreen
                 )
             }
@@ -149,25 +155,44 @@ fun Sheet(
 @Composable
 fun SheetTitle(
     title: String,
+    subtitle: @Composable (() -> Unit)? = null,
     isFullscreen: Boolean = false,
     padding: PaddingValues = PaddingValues(
         top = 4.dp,
-        start = 32.dp,
+        start = 20.dp,
         bottom = 16.dp,
         end = 20.dp
     )
 ) {
-    Text(
-        text = title,
-        color = MaterialTheme.colorScheme.text,
-        style = MaterialTheme.typography.titleLarge,
+
+    Column(
         modifier = Modifier
             .padding(padding)
-            .padding(top = if (isFullscreen) 12.dp else 0.dp),
-        autoSize = TextAutoSize.StepBased(maxFontSize = 24.sp, stepSize = 2.sp),
-        maxLines = 3
-    )
+            .padding(top = if (isFullscreen) 12.dp else 0.dp)
+    ) {
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.text,
+            style = MaterialTheme.typography.titleLarge,
+            autoSize = TextAutoSize.StepBased(maxFontSize = 24.sp, stepSize = 2.sp),
+            maxLines = 3,
+            modifier = Modifier.padding(start = 10.dp)
+        )
 
+        subtitle?.invoke()
+
+    }
+
+}
+
+@Composable
+fun SheetSubtitle(text: String) {
+    Text(
+        text = text,
+        color = MaterialTheme.colorScheme.tertiary.alpha(0.85f),
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.padding(top = 4.dp, start = 1.dp)
+    )
 }
 
 
@@ -238,23 +263,28 @@ fun SheetBase(
     onDismiss: UnitFunction,
     properties: ModalBottomSheetProperties? = null,
     forceFullscreen: Boolean = false,
+    autoFullscreenAfterInitialLoad: Boolean = true,
     contentWindowInsets: @Composable () -> WindowInsets = { WindowInsets.ime },
     userDismissible: Boolean = true,
     content: @Composable (ColumnScope.(targetState: SheetValue, isFullscreen: Boolean) -> Unit)
 ) {
 
-    val modalSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { return@rememberModalBottomSheetState userDismissible || it == SheetValue.Expanded }
+    val modalSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
+        confirmValueChange = { userDismissible || it == SheetValue.Expanded }
     )
 
     var isFullscreen by remember { mutableStateOf(forceFullscreen) }
+    var hasHandledInitialSize by remember { mutableStateOf(false) }
     val isFullscreenExpanded = modalSheetState.targetValue == SheetValue.Expanded && isFullscreen
 
     val isLightTheme = LocalBaseTheme.current == BaseTheme.LIGHT
     val configuration = LocalWindowInfo.current
     val density = LocalDensity.current
     val top = WindowInsets.statusBars.getTop(density)
+    val bottom = WindowInsets.navigationBars.getBottom(density)
+    val fortyDp = with(density) { 40.dp.toPx() }
 
     val roundedCornerRadius by animateDpAsState(
         targetValue = if (isFullscreenExpanded) 4.dp else 36.dp,
@@ -263,8 +293,16 @@ fun SheetBase(
 
     ModalBottomSheet(
         modifier = Modifier.onSizeChanged {
-            isFullscreen =
-                forceFullscreen || it.height >= (configuration.containerSize.height - top)
+
+            if (it.height <= 0) return@onSizeChanged
+
+            if (forceFullscreen) {
+                isFullscreen = true
+            } else if (!hasHandledInitialSize || autoFullscreenAfterInitialLoad) {
+                val fullscreenThreshold = configuration.containerSize.height - top - bottom - fortyDp
+                isFullscreen = it.height >= fullscreenThreshold
+                hasHandledInitialSize = true
+            }
         },
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(roundedCornerRadius, roundedCornerRadius),

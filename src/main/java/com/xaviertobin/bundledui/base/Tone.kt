@@ -54,7 +54,7 @@ fun vividTextColorForTone(tone: Tone) = when (tone) {
 // Vivid container colours are for small, primary, eye-catching components - like a button
 @Composable
 fun vividContainerColorForTone(tone: Tone) = when (tone) {
-    Tone.POSITIVE -> MaterialTheme.colorScheme.primary
+    Tone.POSITIVE -> MaterialTheme.colorScheme.tertiary
     Tone.NEUTRAL -> MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp)
     Tone.NEGATIVE -> MaterialTheme.colorScheme.vividErrorSurfaceColor()
     Tone.WARNING -> MaterialTheme.colorScheme.vividWarningSurfaceColor()

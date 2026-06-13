@@ -22,8 +22,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.xaviertobin.bundledui.R
 import com.xaviertobin.bundledui.base.UnitFunction
 import com.xaviertobin.bundledui.base.rememberDpAsPx
 import com.xaviertobin.bundledui.buttons.IconButton
@@ -50,7 +52,7 @@ fun <T> SectionSelectItem(
 
     val strokeColor = MaterialTheme.colorScheme.tertiary.alpha(0.5f)
 
-    val shape = RoundedCornerShape(34.dp)
+    val shape = RoundedCornerShape(40.dp)
 
     Row(
         modifier = Modifier
@@ -63,11 +65,10 @@ fun <T> SectionSelectItem(
                 drawRoundRect(
                     color = strokeColor,
                     style = stroke,
-                    cornerRadius = CornerRadius(34.dp.toPx())
+                    cornerRadius = CornerRadius(40.dp.toPx())
                 )
             }
             .padding(1.dp)
-
             .clip(shape),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -88,7 +89,7 @@ fun <T> SectionSelectItem(
                 onClick = onClear,
                 color = MaterialTheme.colorScheme.surface,
                 backgroundColor = MaterialTheme.colorScheme.tertiary,
-                contentDescription = "Deselect $title",
+                contentDescription = stringResource(R.string.unselect_x, title),
                 padding = PaddingValues(2.dp),
                 margin = PaddingValues(end = 18.dp, start = 10.dp),
                 size = 18.dp
@@ -109,15 +110,6 @@ fun <T> SectionSelectItem(
 @Composable
 fun SectionSelectItemPreview() {
     Column {
-
-//        SectionSelectItem(
-//            title = "Title",
-//            description = "Description",
-//            icon = Icons.Rounded.Check,
-//            selected = true,
-//            tone = Tone.NEUTRAL,
-//            onClick = {}
-//        )
 
     }
 }

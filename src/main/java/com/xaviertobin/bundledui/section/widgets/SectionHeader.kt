@@ -80,8 +80,13 @@ fun SectionHeaderSheet(
     modifier: Modifier = Modifier,
     color: Color? = null,
     icon: ImageVector,
+    enabled: Boolean = true,
     sheet: @Composable (onDismiss: () -> Unit) -> Unit
 ) {
+    if (!enabled) {
+        SectionHeader(text = text, modifier = modifier, color = color)
+        return
+    }
     ToggleComposable(
         defaultContent = {
             SectionHeaderAction(

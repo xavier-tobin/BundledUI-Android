@@ -2,6 +2,7 @@ package com.xaviertobin.bundledui.buttons
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material3.Button
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.xaviertobin.bundledui.base.ToggleComposable
 import com.xaviertobin.bundledui.base.Tone
 import com.xaviertobin.bundledui.base.UnitFunction
@@ -30,10 +32,10 @@ import com.xaviertobin.bundledui.section.extras.EndIcon
 import com.xaviertobin.bundledui.section.extras.LoadingOrIcon
 
 val RoundedButtonPadding = PaddingValues(
-    start = 18.dp,
-    top = 8.dp,
-    bottom = 8.dp,
-    end = 18.dp
+    start = 22.dp,
+    end = 22.dp,
+    top = 12.dp,
+    bottom = 12.dp,
 )
 
 @Composable
@@ -67,6 +69,10 @@ fun RoundedButtonBase(
             style = MaterialTheme.typography.bodyLarge,
             color = textColor,
             textAlign = TextAlign.End,
+            fontSize = 15.sp,
+            modifier = Modifier.padding(
+                end = if (endContent == null) 0.dp else 4.dp
+            )
         )
         endContent?.invoke()
     }
@@ -129,8 +135,8 @@ fun RoundedButton(
     onClick = onClick,
     enabled = enabled,
     textColor = textColor,
-    endContent = {
-        icon?.let {
+    endContent = icon?.let {
+        {
             EndIcon(
                 icon = icon,
                 color = textColor,

@@ -35,6 +35,7 @@ fun SectionTextInput2(
     fontSize: TextUnit = 16.sp,
     placeholder: String? = label,
     singleLine: Boolean = true,
+    allowEnterForNewLine: Boolean = false,
     minLines: Int = 1,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     first: Boolean = false,
@@ -51,6 +52,11 @@ fun SectionTextInput2(
     val interactionSource = remember { MutableInteractionSource() }
     val isError = errorMessage != null
     val indicatorColors = sectionTextInputIndicatorColors(isError)
+    val resolvedKeyboardOptions = if (allowEnterForNewLine) {
+        keyboardOptions.copy(imeAction = ImeAction.Default)
+    } else {
+        keyboardOptions
+    }
 
     Section(
         first = first,
@@ -92,7 +98,7 @@ fun SectionTextInput2(
                     )
                 }
             } else null,
-            keyboardOptions = keyboardOptions,
+            keyboardOptions = resolvedKeyboardOptions,
             enabled = enabled,
             colors = sectionTextInputColors(),
             placeholder = {
