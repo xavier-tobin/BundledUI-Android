@@ -83,7 +83,7 @@ fun DropdownChip(
                     .clickable(
                         onClick = onTriggered
                     )
-                    .padding(start = 16.dp, top = 6.dp, end = 10.dp, bottom = 6.dp)
+                    .padding(start = 16.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
             ) {
                 icon?.let {
                     Icon(
@@ -102,7 +102,7 @@ fun DropdownChip(
                     contentDescription = value,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .padding(start = 6.dp)
+                        .padding(start = 4.dp)
                         .size(20.dp)
                         .rotate(rotate)
                 )

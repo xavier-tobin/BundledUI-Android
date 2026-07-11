@@ -1,6 +1,7 @@
 package com.xaviertobin.bundledui.section.widgets
 
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,11 +56,15 @@ fun <T> SectionSelectItem(
 
     val shape = RoundedCornerShape(40.dp)
 
+    val isSelected = selected == null
+
     Row(
         modifier = Modifier
             .then(modifier)
+
+            .heightIn(min = if (isSelected) 360.dp else 30.dp, max = 420.dp)
             .background(
-                color = MaterialTheme.colorScheme.tertiary.alpha(0.06f),
+                color =  MaterialTheme.colorScheme.tertiary.alpha(0.06f),
                 shape = shape
             )
             .drawBehind {
@@ -68,12 +74,16 @@ fun <T> SectionSelectItem(
                     cornerRadius = CornerRadius(40.dp.toPx())
                 )
             }
-            .padding(1.dp)
-            .clip(shape),
+            .padding(0.9.dp)
+            .animateContentSize()
+            .clip(shape)
+            ,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.weight(1f)
+            .padding(if (selected != null) 14.dp else 0.dp)
+        ) {
             if (selected == null) {
                 selectionList()
             } else {
@@ -91,7 +101,7 @@ fun <T> SectionSelectItem(
                 backgroundColor = MaterialTheme.colorScheme.tertiary,
                 contentDescription = stringResource(R.string.unselect_x, title),
                 padding = PaddingValues(2.dp),
-                margin = PaddingValues(end = 18.dp, start = 10.dp),
+                margin = PaddingValues(end = 20.dp, start = 2.dp),
                 size = 18.dp
             )
         }
