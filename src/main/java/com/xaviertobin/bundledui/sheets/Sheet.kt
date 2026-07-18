@@ -175,7 +175,7 @@ fun SheetTitle(
             color = MaterialTheme.colorScheme.text,
             style = MaterialTheme.typography.titleLarge,
             autoSize = TextAutoSize.StepBased(maxFontSize = 24.sp, stepSize = 2.sp),
-            maxLines = 3,
+            maxLines = 4,
             modifier = Modifier.padding(start = 10.dp)
         )
 

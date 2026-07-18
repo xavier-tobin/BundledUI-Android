@@ -2,7 +2,6 @@ package com.xaviertobin.bundledui.animations
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,14 +18,14 @@ import androidx.compose.ui.unit.dp
 fun AnimatedVerticalVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    clipRadius: Dp = 28.dp,
+    clipRadius: Dp = 0.dp,
     content: @Composable (AnimatedVisibilityScope.() -> Unit)
 ) = AnimatedVisibility(
     visible = visible,
-    enter = fadeIn(tween(350))
-            + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
-    exit = shrinkVertically(MaterialTheme.motionScheme.fastSpatialSpec())
-            + fadeOut(tween(350)),
+    enter = fadeIn()
+            + expandVertically(MaterialTheme.motionScheme.defaultSpatialSpec()),
+    exit = shrinkVertically(MaterialTheme.motionScheme.defaultSpatialSpec())
+            + fadeOut(),
     modifier = Modifier
         .then(modifier)
         .clip(RoundedCornerShape(clipRadius)),
