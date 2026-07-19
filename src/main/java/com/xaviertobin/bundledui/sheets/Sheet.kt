@@ -1,7 +1,11 @@
 package com.xaviertobin.bundledui.sheets
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.LocalIndication
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +27,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -33,10 +36,10 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetState
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -47,6 +50,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -61,11 +66,14 @@ import com.xaviertobin.bundledui.section.widgets.SectionSwitch
 import com.xaviertobin.bundledui.theme.BaseTheme
 import com.xaviertobin.bundledui.theme.LocalBaseTheme
 import com.xaviertobin.bundledui.theme.safeSurface
-import com.xaviertobin.bundledui.theme.secondaryText
 import com.xaviertobin.bundledui.theme.text
 
 typealias UnitFunction = () -> Unit
 typealias ComposableFunction = @Composable () -> Unit
+
+private val LocalSheetAtExpandedPosition = compositionLocalOf { true }
+private val LocalAnimateSheetSize = compositionLocalOf { false }
+private val LocalOnSheetSizeAnimationFinished = compositionLocalOf<() -> Unit> { {} }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -89,62 +97,70 @@ fun Sheet(
 ) {
 
     var naturalContentHeight by remember { mutableIntStateOf(0) }
-    var headerHeight by remember { mutableIntStateOf(0) }
+    var headerHeight by remember(title) { mutableIntStateOf(0) }
     val density = LocalDensity.current
     val headerHeightDp = with(density) { headerHeight.toDp() }
     val scrollState = rememberScrollState()
     val isScrolled by remember { derivedStateOf { scrollState.value > 0 } }
+    val animateSheetSize = LocalAnimateSheetSize.current
+    val onSheetSizeAnimationFinished = LocalOnSheetSizeAnimationFinished.current
 
-    CompositionLocalProvider(LocalIndication provides ripple(color = MaterialTheme.colorScheme.secondaryText)) {
-
-        SheetBase(
-            onDismiss = onDismiss,
-            forceFullscreen = forceFullscreen,
-            autoFullscreenAfterInitialLoad = autoFullscreenAfterInitialLoad,
-            userDismissible = userDismissible,
-            naturalContentHeight = naturalContentHeight,
-        ) { sheetState, isFullscreen ->
-            Box(
-                modifier = Modifier.conditional(isFullscreen) {
+    SheetBase(
+        onDismiss = onDismiss,
+        forceFullscreen = forceFullscreen,
+        autoFullscreenAfterInitialLoad = autoFullscreenAfterInitialLoad,
+        userDismissible = userDismissible,
+        naturalContentHeight = naturalContentHeight,
+    ) { sheetState, isFullscreen ->
+        Box(
+            modifier = Modifier
+                .animateContentSize(
+                    animationSpec = if (animateSheetSize) {
+                        tween(durationMillis = 320, easing = FastOutSlowInEasing)
+                    } else {
+                        snap()
+                    },
+                    finishedListener = { _, _ ->
+                        if (animateSheetSize) onSheetSizeAnimationFinished()
+                    },
+                )
+                .conditional(isFullscreen) {
                     Modifier.fillMaxHeight()
                 }
+        ) {
+            Column(
+                modifier = Modifier
+                    .conditional(isFullscreen) { Modifier.fillMaxHeight() }
+                    .then(
+                        if (!disableScroll || isFullscreen) {
+                            Modifier.verticalScroll(scrollState)
+                        } else {
+                            Modifier
+                        }
+                    )
             ) {
                 Column(
                     modifier = Modifier
-                        .conditional(isFullscreen) { Modifier.fillMaxHeight() }
-                        .then(
-                            if (!disableScroll || isFullscreen) {
-                                Modifier.verticalScroll(scrollState)
-                            } else {
-                                Modifier
-                            }
-                        )
+                        .onSizeChanged { naturalContentHeight = it.height }
+                        .padding(systemContentPadding)
+                        .padding(defaultContentPadding)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .onSizeChanged { naturalContentHeight = it.height }
-                            .padding(systemContentPadding)
-                            .padding(defaultContentPadding)
-                    ) {
-                        Spacer(modifier = Modifier.height(headerHeightDp))
-                        content()
-                    }
+                    Spacer(modifier = Modifier.height(headerHeightDp))
+                    content()
                 }
-
-                SheetHeader(
-                    sheetValue = sheetState,
-                    isFullscreen = isFullscreen,
-                    userDismissible = userDismissible,
-                    title = title,
-                    subtitle = subtitle,
-                    isScrolled = isScrolled,
-                    onSizeChanged = { headerHeight = it },
-                )
             }
+
+            SheetHeader(
+                sheetValue = sheetState,
+                isFullscreen = isFullscreen,
+                userDismissible = userDismissible,
+                title = title,
+                subtitle = subtitle,
+                isScrolled = isScrolled,
+                onSizeChanged = { headerHeight = maxOf(headerHeight, it) },
+            )
         }
-
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,6 +175,7 @@ private fun BoxScope.SheetHeader(
     onSizeChanged: (Int) -> Unit,
 ) {
     val backgroundColor = MaterialTheme.colorScheme.safeSurface()
+    val isAtExpandedPosition = LocalSheetAtExpandedPosition.current
 
     val titleElevation by animateDpAsState(
         targetValue = if (isScrolled) 8.dp else 0.dp,
@@ -180,11 +197,12 @@ private fun BoxScope.SheetHeader(
             sheetValue = sheetValue,
             isFullscreen = isFullscreen,
             showHandle = userDismissible,
+            isAtExpandedPosition = isAtExpandedPosition,
         )
 
         if (title != null) {
             Surface(
-                modifier = Modifier.padding(horizontal = 12.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                 color = backgroundColor,
                 shape = RoundedCornerShape(24.dp),
                 shadowElevation = titleElevation,
@@ -192,6 +210,7 @@ private fun BoxScope.SheetHeader(
                 SheetTitle(
                     title = title,
                     subtitle = subtitle,
+                    isCompact = isScrolled,
                 )
             }
         }
@@ -203,13 +222,16 @@ private fun BoxScope.SheetHeader(
 fun SheetTitle(
     title: String,
     subtitle: @Composable (() -> Unit)? = null,
+    isCompact: Boolean = false,
     padding: PaddingValues = PaddingValues(
-        top = 4.dp,
-        start = 20.dp,
-        bottom = 16.dp,
-        end = 20.dp
+        horizontal = 10.dp,
+        vertical = 10.dp,
     )
 ) {
+    val titleScale by animateFloatAsState(
+        targetValue = if (isCompact) 0.75f else 1f,
+        label = "titleFontSize",
+    )
 
     Column(
         modifier = Modifier.padding(padding)
@@ -217,10 +239,18 @@ fun SheetTitle(
         Text(
             text = title,
             color = MaterialTheme.colorScheme.text,
-            style = MaterialTheme.typography.titleLarge,
-            autoSize = TextAutoSize.StepBased(maxFontSize = 24.sp, stepSize = 2.sp),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 24.sp,
+                lineHeight = 28.sp,
+            ),
             maxLines = 4,
-            modifier = Modifier.padding(start = 10.dp)
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = titleScale
+                    scaleY = titleScale
+                    transformOrigin = TransformOrigin(0f, 0.5f)
+                }
+                .padding(horizontal = 10.dp)
         )
 
         subtitle?.invoke()
@@ -274,11 +304,13 @@ fun SheetDragHandleShield(
     sheetValue: SheetValue,
     isFullscreen: Boolean,
     showHandle: Boolean = true,
+    isAtExpandedPosition: Boolean = sheetValue == SheetValue.Expanded,
 ) {
 
     Column(
         modifier = Modifier
-            .height(WindowInsets.statusBarsIgnoringVisibility
+            .height(
+                WindowInsets.statusBarsIgnoringVisibility
                     .asPaddingValues()
                     .calculateTopPadding()
             )
@@ -286,7 +318,10 @@ fun SheetDragHandleShield(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AnimateInFade(showHandle && (sheetValue != SheetValue.Expanded || !isFullscreen)) {
+        AnimateInFade(
+            showHandle && (!isFullscreen || !isAtExpandedPosition),
+            100,
+        ) {
             Spacer(
                 modifier = Modifier
                     .background(
@@ -322,6 +357,7 @@ fun SheetBase(
 
     var isFullscreen by remember { mutableStateOf(forceFullscreen) }
     var hasHandledInitialSize by remember { mutableStateOf(false) }
+    var animateSheetSize by remember { mutableStateOf(false) }
 
     val isLightTheme = LocalBaseTheme.current == BaseTheme.LIGHT
     val configuration = LocalWindowInfo.current
@@ -329,8 +365,16 @@ fun SheetBase(
 
     val top = WindowInsets.navigationBars.getBottom(density)
     val bottom = WindowInsets.navigationBars.getBottom(density)
-    val extra = with(density) { 20.dp.toPx() }
+    val extra = with(density) { 2.dp.toPx() }
     val fullscreenThreshold = configuration.containerSize.height - bottom - top - extra
+    val expandedPositionTolerance = with(density) { 1.dp.toPx() }
+    val isAtExpandedPosition by remember(isFullscreen, expandedPositionTolerance) {
+        derivedStateOf {
+            !isFullscreen || runCatching {
+                modalSheetState.requireOffset() <= expandedPositionTolerance
+            }.getOrDefault(true)
+        }
+    }
 
     LaunchedEffect(
         forceFullscreen,
@@ -339,15 +383,23 @@ fun SheetBase(
         autoFullscreenAfterInitialLoad,
     ) {
         if (forceFullscreen) {
-            isFullscreen = true
+            if (!isFullscreen) {
+                animateSheetSize = hasHandledInitialSize
+                isFullscreen = true
+            }
+            if (naturalContentHeight > 0) hasHandledInitialSize = true
         } else if (naturalContentHeight > 0 && (!hasHandledInitialSize || autoFullscreenAfterInitialLoad)) {
-            isFullscreen = naturalContentHeight >= fullscreenThreshold
+            val nextIsFullscreen = naturalContentHeight >= fullscreenThreshold
+            if (nextIsFullscreen != isFullscreen) {
+                animateSheetSize = hasHandledInitialSize
+                isFullscreen = nextIsFullscreen
+            }
             hasHandledInitialSize = true
         }
     }
 
     val roundedCornerRadius by animateDpAsState(
-        targetValue = if (isFullscreen && modalSheetState.targetValue != SheetValue.Hidden) 0.dp else 36.dp,
+        targetValue = if (isFullscreen && isAtExpandedPosition) 0.dp else 36.dp,
         label = "roundedCornerRadius"
     )
 
@@ -366,7 +418,13 @@ fun SheetBase(
             isAppearanceLightStatusBars = isLightTheme,
         ),
         content = {
-            content(modalSheetState.targetValue, isFullscreen)
+            CompositionLocalProvider(
+                LocalSheetAtExpandedPosition provides isAtExpandedPosition,
+                LocalAnimateSheetSize provides animateSheetSize,
+                LocalOnSheetSizeAnimationFinished provides { animateSheetSize = false },
+            ) {
+                content(modalSheetState.targetValue, isFullscreen)
+            }
         }
     )
 }
