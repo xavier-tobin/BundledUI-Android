@@ -26,7 +26,7 @@ fun HSBColor.rotateHue(by: Float = 180f): HSBColor {
  * Returns the complementary color on the Color wheel
  */
 fun Color.rotateHue(by: Float = 180f): Color {
-  return  this.hsb().rotateHue(by = by).toColor()
+    return this.hsb().rotateHue(by = by).toColor()
 }
 
 fun Color.hue(): Float {
@@ -113,19 +113,21 @@ fun Color.dulled(forTheme: BaseTheme, by: Float = 0.4f): Color {
 }
 
 fun Color.Companion.randomAestheticColor(): Color {
-    val style = listOf("pastel", "vibrant", "other").random()
-    val niceHueRanges = listOf(0f..35f, 75f..360f)
+    val baseColor = listOf(
+        HSBColor(18f, 0.68f, 0.9f),
+        HSBColor(45f, 0.62f, 0.92f),
+        HSBColor(105f, 0.54f, 0.82f),
+        HSBColor(145f, 0.52f, 0.78f),
+        HSBColor(205f, 0.63f, 0.88f),
+        HSBColor(235f, 0.58f, 0.84f),
+        HSBColor(280f, 0.55f, 0.87f),
+        HSBColor(335f, 0.62f, 0.9f)
+    ).random()
 
-    val (saturation, brightness) = when (style) {
-        "pastel" -> Pair((0.38f..0.55f).random(), (0.85f..0.9f).random())
-        "vibrant" -> Pair((0.6f..0.9f).random(), (0.7f..0.85f).random())
-        else -> Pair((0.5f..0.8f).random(), (0.6f..0.9f).random())
-    }
-
-    return HSBColor(
-        hue = niceHueRanges.random().random(),
-        saturation = saturation,
-        brightness = brightness
+    return baseColor.copy(
+        hue = (baseColor.hue + (-14f..14f).random() + 360f) % 360f,
+        saturation = (baseColor.saturation + (-0.1f..0.1f).random()).coerceIn(0.42f, 0.78f),
+        brightness = (baseColor.brightness + (-0.07f..0.07f).random()).coerceIn(0.72f, 0.96f)
     ).toColor()
 }
 

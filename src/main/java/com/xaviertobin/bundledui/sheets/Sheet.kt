@@ -50,11 +50,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -131,17 +130,12 @@ fun Sheet(
             Column(
                 modifier = Modifier
                     .conditional(isFullscreen) { Modifier.fillMaxHeight() }
-                    .then(
-                        if (!disableScroll || isFullscreen) {
-                            Modifier.verticalScroll(scrollState)
-                        } else {
-                            Modifier
-                        }
-                    )
+                    .conditional(!disableScroll) { Modifier.verticalScroll(scrollState) }
             ) {
                 Column(
                     modifier = Modifier
                         .onSizeChanged { naturalContentHeight = it.height }
+                        .conditional(forceFullscreen) { Modifier.fillMaxHeight() }
                         .padding(systemContentPadding)
                         .padding(defaultContentPadding)
                 ) {
@@ -228,8 +222,9 @@ fun SheetTitle(
         vertical = 10.dp,
     )
 ) {
-    val titleScale by animateFloatAsState(
-        targetValue = if (isCompact) 0.75f else 1f,
+    val titleFontSize by animateFloatAsState(
+        targetValue = if (isCompact) 18f else 24f,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
         label = "titleFontSize",
     )
 
@@ -240,17 +235,12 @@ fun SheetTitle(
             text = title,
             color = MaterialTheme.colorScheme.text,
             style = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 24.sp,
-                lineHeight = 28.sp,
+                fontSize = titleFontSize.sp,
+                lineHeight = (titleFontSize + 4f).sp,
+                textMotion = TextMotion.Animated,
             ),
             maxLines = 4,
-            modifier = Modifier
-                .graphicsLayer {
-                    scaleX = titleScale
-                    scaleY = titleScale
-                    transformOrigin = TransformOrigin(0f, 0.5f)
-                }
-                .padding(horizontal = 10.dp)
+            modifier = Modifier.padding(horizontal = 10.dp)
         )
 
         subtitle?.invoke()

@@ -33,7 +33,7 @@ import com.xaviertobin.bundledui.section.extras.LoadingOrIcon
 
 val RoundedButtonPadding = PaddingValues(
     start = 22.dp,
-    end = 22.dp,
+    end = 18.dp,
     top = 12.dp,
     bottom = 12.dp,
 )
@@ -71,7 +71,7 @@ fun RoundedButtonBase(
             textAlign = TextAlign.End,
             fontSize = 15.sp,
             modifier = Modifier.padding(
-                end = if (endContent == null) 0.dp else 4.dp
+                end = if (endContent == null) 0.dp else 2.dp
             )
         )
         endContent?.invoke()
