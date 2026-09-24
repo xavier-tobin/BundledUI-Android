@@ -3,12 +3,7 @@ package com.xaviertobin.bundledui.section.widgets
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
@@ -16,17 +11,9 @@ import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.rounded.Visibility
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SecureTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
@@ -71,7 +58,10 @@ fun SectionTextInput(
     enabled: Boolean = true,
     errorMessage: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Next, capitalization = KeyboardCapitalization.Sentences),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        imeAction = ImeAction.Next,
+        capitalization = KeyboardCapitalization.Sentences
+    ),
     onValueChange: (value: String) -> Unit,
 ) {
 
@@ -324,7 +314,7 @@ fun SectionTextInputPlaceholder(
     if (placeholder != null) {
         Text(
             text = placeholder,
-            modifier = Modifier.alpha(0.35f).offset(y = -extraTopPadding ),
+            modifier = Modifier.alpha(0.35f).offset(y = -extraTopPadding),
             color = MaterialTheme.colorScheme.text,
             fontSize = fontSize,
             style = MaterialTheme.typography.bodyLarge,

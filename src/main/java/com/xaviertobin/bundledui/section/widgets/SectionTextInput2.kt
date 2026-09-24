@@ -75,8 +75,7 @@ fun SectionTextInput2(
         modifier = modifier,
 //        tone = if (isError) Tone.NEGATIVE else Tone.NEUTRAL
     ) {
-
-
+        
         TextField(
             state = value,
             modifier = Modifier

@@ -97,7 +97,7 @@ fun Sheet(
 ) {
 
     var naturalContentHeight by remember { mutableIntStateOf(0) }
-    var headerHeight by remember(title) { mutableIntStateOf(0) }
+    var headerHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
     val headerHeightDp = with(density) { headerHeight.toDp() }
     val scrollState = rememberScrollState()
