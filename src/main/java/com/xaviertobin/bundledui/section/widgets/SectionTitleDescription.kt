@@ -179,8 +179,8 @@ private fun InnerVerticalContent(
                 .padding(
                     start = 0.dp,
                     end = 0.dp,
-                    top = 10.dp,
-                    bottom = 10.dp
+                    top = 12.dp,
+                    bottom = 12.dp
                 )
                 .weight(1f),
             verticalArrangement = Arrangement.Center
