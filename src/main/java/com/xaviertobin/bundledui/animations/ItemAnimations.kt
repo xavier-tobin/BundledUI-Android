@@ -40,3 +40,16 @@ fun LazyItemScope.itemAnimations(): Modifier {
             fadeOutSpec = fadeOutSpec
         )
 }
+
+
+public fun LazyItemScope.springItemAnimations(): Modifier =
+    Modifier.animateItem(
+        fadeInSpec = spring(stiffness = Spring.StiffnessMedium),
+        placementSpec =
+            spring(
+                stiffness = Spring.StiffnessMedium,
+                visibilityThreshold = IntOffset.VisibilityThreshold,
+            ),
+        fadeOutSpec = spring(stiffness = Spring.StiffnessMedium),
+    )
+

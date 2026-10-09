@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.xaviertobin.bundledui.base.ToggleComposable
 import com.xaviertobin.bundledui.buttons.IconButton
 import com.xaviertobin.bundledui.color.blend
 import com.xaviertobin.bundledui.theme.elevatedSurface
@@ -60,56 +61,80 @@ fun DropdownChip(
     icon: ImageVector? = null,
     dropdownContent: @Composable ColumnScope.(onDismiss: () -> Unit) -> Unit,
 ) {
-
-    val shape = RoundedCornerShape(20.dp)
-
     DropdownComposable(
         triggerContent = { onTriggered, expanded ->
-
-            val rotate by animateFloatAsState(
-                targetValue = if (expanded) 180f else 0f,
-                animationSpec = spring(stiffness = 400f, dampingRatio = 0.5f),
-                label = "rotate"
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(defaultMargin)
-                    .clip(shape)
-                    .background(
-                        color = MaterialTheme.colorScheme.elevatedSurface(),
-                    )
-                    .clickable(
-                        onClick = onTriggered
-                    )
-                    .padding(start = 16.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
-            ) {
-                icon?.let {
-                    Icon(
-                        imageVector = it,
-                        contentDescription = value,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(end = 6.dp)
-                            .size(14.dp)
-                    )
-                }
-
-                Text(text = value, color = MaterialTheme.colorScheme.primary, modifier = Modifier.animateContentSize())
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = value,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp)
-                        .rotate(rotate)
-                )
-            }
+            DropdownChipTrigger(value, onTriggered, expanded, defaultMargin, icon)
         },
         dropdownContent = dropdownContent
     )
+}
+
+@Composable
+fun DropdownChipSheet(
+    value: String,
+    defaultMargin: PaddingValues = PaddingValues(horizontal = 4.dp),
+    icon: ImageVector? = null,
+    sheet: @Composable (onDismiss: () -> Unit) -> Unit,
+) {
+    ToggleComposable(
+        defaultContent = { onShow ->
+            DropdownChipTrigger(value, onShow, false, defaultMargin, icon)
+        },
+        enabledContent = sheet
+    )
+}
+
+@Composable
+private fun DropdownChipTrigger(
+    value: String,
+    onClick: () -> Unit,
+    expanded: Boolean,
+    margin: PaddingValues,
+    icon: ImageVector?,
+) {
+    val shape = RoundedCornerShape(22.dp)
+
+    val rotate by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = spring(stiffness = 400f, dampingRatio = 0.5f),
+        label = "rotate"
+    )
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(margin)
+            .clip(shape)
+            .background(
+                color = MaterialTheme.colorScheme.elevatedSurface(),
+            )
+            .clickable(
+                onClick = onClick
+            )
+            .padding(start = 20.dp, top = 12.dp, end = 16.dp, bottom = 12.dp)
+    ) {
+        icon?.let {
+            Icon(
+                imageVector = it,
+                contentDescription = value,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .size(16.dp)
+            )
+        }
+
+        Text(text = value, color = MaterialTheme.colorScheme.primary, modifier = Modifier.animateContentSize())
+        Icon(
+            imageVector = Icons.Rounded.KeyboardArrowDown,
+            contentDescription = value,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .size(20.dp)
+                .rotate(rotate)
+        )
+    }
 }
 
 @Composable
