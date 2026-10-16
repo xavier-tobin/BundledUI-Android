@@ -79,7 +79,7 @@ fun SectionButtonHorizontal(
         ) {
             Icon(
                 modifier = Modifier
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 10.dp)
                     .size(20.dp),
                 imageVector = icon,
                 contentDescription = description ?: title,

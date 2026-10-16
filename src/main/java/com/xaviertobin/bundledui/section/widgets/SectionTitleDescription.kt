@@ -219,7 +219,7 @@ private fun ColumnScope.InnerHorizontalContent(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         contentTop?.invoke()
         SectionTitle(
