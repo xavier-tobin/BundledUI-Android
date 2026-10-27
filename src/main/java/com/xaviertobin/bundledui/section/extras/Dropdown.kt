@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -85,12 +86,23 @@ fun DropdownChipSheet(
 }
 
 @Composable
+fun ToggleChip(
+    value: String,
+    onToggle: () -> Unit,
+    defaultMargin: PaddingValues = PaddingValues(horizontal = 4.dp),
+    icon: ImageVector? = null,
+) {
+    DropdownChipTrigger(value, onToggle, false, defaultMargin, icon, Icons.Rounded.SwapHoriz)
+}
+
+@Composable
 private fun DropdownChipTrigger(
     value: String,
     onClick: () -> Unit,
     expanded: Boolean,
     margin: PaddingValues,
     icon: ImageVector?,
+    trailingIcon: ImageVector = Icons.Rounded.KeyboardArrowDown,
 ) {
     val shape = RoundedCornerShape(22.dp)
 
@@ -126,7 +138,7 @@ private fun DropdownChipTrigger(
 
         Text(text = value, color = MaterialTheme.colorScheme.primary, modifier = Modifier.animateContentSize())
         Icon(
-            imageVector = Icons.Rounded.KeyboardArrowDown,
+            imageVector = trailingIcon,
             contentDescription = value,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
