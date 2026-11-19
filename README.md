@@ -103,5 +103,13 @@ the included Section components and even creating your own.__
 
 # Step 3: Extras, animations and utilities
 
-> More to come... docs are a work in progress
+The visibility helpers (`AnimatedVerticalVisibility`, `AnimatedFastVerticalVisibility`,
+`AnimatedHorizontalVisibility`, `AnimatedExpandVisibility` and `AnimateInFade`) use
+Compose 1.13's `CapturedAnimatedVisibility`. Their existing transitions and clipping
+are preserved, but exiting content is a snapshot of its last rendered frame:
+nullable data can be cleared immediately without blanking the exit animation.
+
+Content lambdas are plain `@Composable () -> Unit`, with no `AnimatedVisibilityScope`.
+Use Compose's `AnimatedVisibility` directly when content must stay live during exit
+or children need `Modifier.animateEnterExit()`.
 

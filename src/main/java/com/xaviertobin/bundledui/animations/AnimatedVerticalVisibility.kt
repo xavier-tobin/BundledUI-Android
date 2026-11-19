@@ -1,7 +1,6 @@
 package com.xaviertobin.bundledui.animations
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.CapturedAnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,8 +18,8 @@ fun AnimatedVerticalVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
     clipRadius: Dp = 0.dp,
-    content: @Composable (AnimatedVisibilityScope.() -> Unit)
-) = AnimatedVisibility(
+    content: @Composable () -> Unit
+) = CapturedAnimatedVisibility(
     visible = visible,
     enter = fadeIn()
             + expandVertically(MaterialTheme.motionScheme.defaultSpatialSpec()),
@@ -37,8 +36,8 @@ fun AnimatedVerticalVisibility(
 fun AnimatedFastVerticalVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    content: @Composable (AnimatedVisibilityScope.() -> Unit)
-) = AnimatedVisibility(
+    content: @Composable () -> Unit
+) = CapturedAnimatedVisibility(
     visible = visible,
     enter = fadeIn()
             + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
