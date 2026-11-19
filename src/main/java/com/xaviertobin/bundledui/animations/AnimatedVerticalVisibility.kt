@@ -31,19 +31,19 @@ fun AnimatedVerticalVisibility(
     content = content
 )
 
-/** Shows [content] while [value] is non-null; the exit animates its last frame. */
+/** Shows [content] while [visible] is non-null; the exit animates its last frame. */
 @Composable
 fun <T : Any> AnimatedVerticalVisibility(
-    value: T?,
+    visible: T?,
     modifier: Modifier = Modifier,
     clipRadius: Dp = 0.dp,
     content: @Composable (T) -> Unit
 ) = AnimatedVerticalVisibility(
-    visible = value != null,
+    visible = visible != null,
     modifier = modifier,
     clipRadius = clipRadius,
 ) {
-    value?.let { content(it) }
+    visible?.let { content(it) }
 }
 
 
