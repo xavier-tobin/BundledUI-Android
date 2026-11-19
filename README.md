@@ -109,6 +109,15 @@ Compose 1.13's `CapturedAnimatedVisibility`. Their existing transitions and clip
 are preserved, but exiting content is a snapshot of its last rendered frame:
 nullable data can be cleared immediately without blanking the exit animation.
 
+For content driven by a nullable value, pass the value instead of a boolean.
+The content receives it non-null, so no `?.let` or fallback values are needed:
+
+```kotlin
+AnimatedVerticalVisibility(selectedDate) { date ->
+    Text(date.toLocalizedLabel())
+}
+```
+
 Content lambdas are plain `@Composable () -> Unit`, with no `AnimatedVisibilityScope`.
 Use Compose's `AnimatedVisibility` directly when content must stay live during exit
 or children need `Modifier.animateEnterExit()`.
