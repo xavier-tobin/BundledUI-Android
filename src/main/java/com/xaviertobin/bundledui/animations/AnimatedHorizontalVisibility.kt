@@ -34,21 +34,6 @@ fun AnimatedHorizontalVisibility(
     content = content
 )
 
-/** Shows [content] while [visible] is non-null; the exit animates its last frame. */
-@Composable
-fun <T : Any> AnimatedHorizontalVisibility(
-    visible: T?,
-    modifier: Modifier = Modifier,
-    clipRadius: Dp = 28.dp,
-    content: @Composable (T) -> Unit
-) = AnimatedHorizontalVisibility(
-    visible = visible != null,
-    modifier = modifier,
-    clipRadius = clipRadius,
-) {
-    visible?.let { content(it) }
-}
-
 val defaultSpring = spring(
     stiffness = Spring.StiffnessMediumLow,
     dampingRatio = DAMPING_RATIO_VERY_LOW,
