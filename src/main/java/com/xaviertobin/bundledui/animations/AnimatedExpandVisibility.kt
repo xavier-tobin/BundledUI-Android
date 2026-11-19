@@ -1,7 +1,6 @@
 package com.xaviertobin.bundledui.animations
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.CapturedAnimatedVisibility
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,8 +17,8 @@ fun AnimatedExpandVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
     clipRadius: Dp = 28.dp,
-    content: @Composable (AnimatedVisibilityScope.() -> Unit)
-) = AnimatedVisibility(
+    content: @Composable () -> Unit
+) = CapturedAnimatedVisibility(
     visible = visible,
     enter = fadeIn()
             + expandIn(defaultSpring),

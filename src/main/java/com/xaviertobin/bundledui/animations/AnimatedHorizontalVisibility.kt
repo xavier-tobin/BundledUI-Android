@@ -1,7 +1,6 @@
 package com.xaviertobin.bundledui.animations
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.CapturedAnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
@@ -24,8 +23,8 @@ fun AnimatedHorizontalVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
     clipRadius: Dp = 28.dp,
-    content: @Composable (AnimatedVisibilityScope.() -> Unit)
-) = AnimatedVisibility(
+    content: @Composable () -> Unit
+) = CapturedAnimatedVisibility(
     visible = visible,
     enter = defaultHorizontalExpandSpec,
     exit = defaultHorizontalShrinkSpec,
