@@ -51,9 +51,10 @@ fun SectionAlert(
     containerColor: Color = containerColorForTone(tone),
     iconColor: Color = iconColorForTone(tone),
     buttonColor: Color = vividContainerColorForTone(tone),
-    dismissOptions: DismissOptions? = null,
+    dismissOptions: AlertActions? = null,
     first: Boolean = true,
     last: Boolean = true,
+    primaryAction: AlertActions? = null,
 ) {
 
     Section(
@@ -113,24 +114,34 @@ fun SectionAlert(
             )
         }
 
-        dismissOptions?.let { options ->
+        if (dismissOptions != null || primaryAction != null) {
             ButtonRow(
                 paddingValues = PaddingValues(
                     bottom = 6.dp
                 )
             ) {
-                RoundedButton(
-                    onClick = options.onClick,
-                    text = options.text,
-                    containerColor = buttonColor,
-                    textColor = vividTextColorForTone(tone)
-                )
+                dismissOptions?.let { options ->
+                    RoundedButton(
+                        onClick = options.onClick,
+                        text = options.text,
+                        containerColor = if (primaryAction == null) buttonColor else Color.Transparent,
+                        textColor = if (primaryAction == null) vividTextColorForTone(tone) else textColor
+                    )
+                }
+                primaryAction?.let { action ->
+                    RoundedButton(
+                        onClick = action.onClick,
+                        text = action.text,
+                        containerColor = buttonColor,
+                        textColor = vividTextColorForTone(tone)
+                    )
+                }
             }
         }
     }
 }
 
-data class DismissOptions(
+data class AlertActions(
     val text: String,
     val onClick: UnitFunction,
 )
