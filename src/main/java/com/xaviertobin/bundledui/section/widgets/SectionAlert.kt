@@ -51,10 +51,10 @@ fun SectionAlert(
     containerColor: Color = containerColorForTone(tone),
     iconColor: Color = iconColorForTone(tone),
     buttonColor: Color = vividContainerColorForTone(tone),
-    dismissOptions: DismissOptions? = null,
+    dismissOptions: AlertActions? = null,
     first: Boolean = true,
     last: Boolean = true,
-    primaryAction: AlertAction? = null,
+    primaryAction: AlertActions? = null,
 ) {
 
     Section(
@@ -141,12 +141,7 @@ fun SectionAlert(
     }
 }
 
-data class AlertAction(
-    val text: String,
-    val onClick: UnitFunction,
-)
-
-data class DismissOptions(
+data class AlertActions(
     val text: String,
     val onClick: UnitFunction,
 )
