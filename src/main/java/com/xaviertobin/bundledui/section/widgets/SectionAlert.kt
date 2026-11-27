@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Celebration
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xaviertobin.bundledui.base.Tone
 import com.xaviertobin.bundledui.base.UnitFunction
+import com.xaviertobin.bundledui.base.baseWarningColor
 import com.xaviertobin.bundledui.base.containerColorForTone
 import com.xaviertobin.bundledui.base.iconColorForTone
 import com.xaviertobin.bundledui.base.textColorForTone
@@ -31,6 +34,8 @@ import com.xaviertobin.bundledui.base.vividContainerColorForTone
 import com.xaviertobin.bundledui.base.vividTextColorForTone
 import com.xaviertobin.bundledui.buttons.ButtonRow
 import com.xaviertobin.bundledui.buttons.RoundedButton
+import com.xaviertobin.bundledui.color.alpha
+import com.xaviertobin.bundledui.color.blend
 import com.xaviertobin.bundledui.section.base.Section
 
 
@@ -48,7 +53,7 @@ fun SectionAlert(
     icon: ImageVector? = null,
     tone: Tone = Tone.NEUTRAL,
     textColor: Color = textColorForTone(tone),
-    containerColor: Color = containerColorForTone(tone),
+    containerColor: Color = sectionAlertContainerColorForTone(tone),
     iconColor: Color = iconColorForTone(tone),
     buttonColor: Color = vividContainerColorForTone(tone),
     dismissOptions: AlertActions? = null,
@@ -66,11 +71,19 @@ fun SectionAlert(
                 dampingRatio = Spring.DampingRatioLowBouncy,
                 stiffness = Spring.StiffnessMedium
             )
+        ),
+        padding = PaddingValues(
+            start = 20.dp,
+            end = 20.dp,
+            top = 12.dp,
+            bottom = 8.dp
         )
     ) {
         Row(
             modifier = Modifier
-                .padding()
+                .padding(
+                    horizontal = 4.dp
+                )
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -79,7 +92,7 @@ fun SectionAlert(
                 text = title,
                 modifier = Modifier
                     .padding(
-                        top = 10.dp,
+                        top = 8.dp,
                         end = 12.dp,
                         bottom = 10.dp
                     )
@@ -94,7 +107,7 @@ fun SectionAlert(
                     imageVector = it,
                     contentDescription = title,
                     modifier = Modifier.padding(
-                        end = 3.dp
+                        end = 6.dp
                     ).offset(x = 8.dp, y = (-2).dp),
                     tint = iconColor
                 )
@@ -106,7 +119,8 @@ fun SectionAlert(
                 text = description,
                 modifier = Modifier
                     .padding(
-                        bottom = 10.dp
+                        bottom = 10.dp,
+                        start = 4.dp
                     ),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start,
@@ -124,8 +138,10 @@ fun SectionAlert(
                     RoundedButton(
                         onClick = options.onClick,
                         text = options.text,
-                        containerColor = if (primaryAction == null) buttonColor else Color.Transparent,
-                        textColor = if (primaryAction == null) vividTextColorForTone(tone) else textColor
+                        tone = Tone.NEUTRAL,
+                        containerColor = MaterialTheme.colorScheme.surface.alpha(0.6f),
+//                        containerColor = ,
+//                        textColor = if (primaryAction == null) vividTextColorForTone(tone) else textColor
                     )
                 }
                 primaryAction?.let { action ->
@@ -146,6 +162,20 @@ data class AlertActions(
     val onClick: UnitFunction,
 )
 
+@Composable
+fun sectionAlertContainerColorForTone(tone: Tone) = when (tone) {
+    Tone.POSITIVE -> MaterialTheme.colorScheme.primary
+    Tone.NEUTRAL -> MaterialTheme.colorScheme.tertiary.alpha(0.16f)
+    Tone.NEGATIVE -> MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).blend(
+        to = Color.Red,
+        by = 0.08f
+    )
+    Tone.WARNING -> MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp).blend(
+        to = baseWarningColor,
+        by = 0.11f
+    )
+}
+
 @Preview
 @Composable
 fun SectionAlertPreview() {
@@ -160,9 +190,17 @@ fun SectionAlertPreview() {
         )
 
         SectionAlert(
-            title = "Test 2",
-            icon = Icons.Rounded.Warning,
+            title = "Black Friday sale!",
+            icon = Icons.Rounded.Celebration,
             description = "This is a test description for the alert. It can be quite long, but it should still look good and be readable.",
+            primaryAction = AlertActions(
+                text = "Primary Action",
+                onClick = {}
+            ),
+            dismissOptions = AlertActions(
+                text = "Got it!",
+                onClick = {}
+            )
         )
     }
 }
