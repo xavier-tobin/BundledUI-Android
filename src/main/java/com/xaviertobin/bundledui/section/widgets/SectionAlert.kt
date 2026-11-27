@@ -139,7 +139,9 @@ fun SectionAlert(
                         onClick = options.onClick,
                         text = options.text,
                         tone = Tone.NEUTRAL,
-                        containerColor = MaterialTheme.colorScheme.surface.alpha(0.6f),
+                        textColor = MaterialTheme.colorScheme.tertiary,
+                        containerColor = MaterialTheme.colorScheme.tertiary.alpha(0.12f),
+
 //                        containerColor = ,
 //                        textColor = if (primaryAction == null) vividTextColorForTone(tone) else textColor
                     )
